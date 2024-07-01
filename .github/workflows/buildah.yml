@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright (c) 2024 Christophe Fontaine
+---
+name: ContainerBuild
+
+on:
+  push:
+    branches:
+    - main
+    - containers
+
+jobs:
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: grout
+    steps:
+    - name: Clone the repository
+      uses: actions/checkout@v2
+    
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
+      if: ${{ failure() }}
+      with:
+        ## If no one connects after 5 minutes, shut down server.
+        wait-timeout-minutes: 5
+    
+    - name: Buildah Action
+      id: build-image
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ${{ env.IMAGE_NAME }}
+        tags: latest ${{ github.sha }}
+        containerfiles: |
+          ./Containerfile
+    - name: Export container to tar.gz
+      run: |
+        docker save ${{ steps.build-image.outputs.image-with-tag }} > /tmp/grout-latest.tar
+ 
+    - uses: actions/upload-artifact@master
+      with:
+        name: grout-latest
+        path: /tmp
