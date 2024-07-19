@@ -325,10 +325,29 @@ int iface_port_reconfig(
 
 static const struct iface *port_ifaces[RTE_MAX_ETHPORTS];
 
+static bool all_txrx_queue_stopped(uint16_t port_id) {
+	struct rte_eth_rxq_info rxqinfo;
+	struct rte_eth_txq_info txqinfo;
+	uint8_t queue_id = 0;
+	bool stopped = true;
+
+	while (rte_eth_rx_queue_info_get(port_id, queue_id++, &rxqinfo) == 0) {
+		stopped &= rxqinfo.queue_state == RTE_ETH_QUEUE_STATE_STOPPED;
+	}
+
+	queue_id = 0;
+	while (rte_eth_tx_queue_info_get(port_id, queue_id++, &txqinfo) == 0) {
+		stopped &= txqinfo.queue_state == RTE_ETH_QUEUE_STATE_STOPPED;
+	}
+	return stopped;
+}
+
 static int iface_port_fini(struct iface *iface) {
 	struct iface_info_port *port = (struct iface_info_port *)iface->info;
+	bool sibling_is_active = false;
 	struct rte_eth_dev_info info;
 	struct worker *worker, *tmp;
+	uint16_t sibling_port_id;
 	size_t n_workers;
 	int ret;
 
@@ -344,7 +363,13 @@ static int iface_port_fini(struct iface *iface) {
 		LOG(ERR, "rte_eth_dev_stop: %s", rte_strerror(-ret));
 	if ((ret = rte_eth_dev_close(port->port_id)) < 0)
 		LOG(ERR, "rte_eth_dev_close: %s", rte_strerror(-ret));
-	if (info.device != NULL && (ret = rte_dev_remove(info.device)) < 0)
+
+	// Do not release resources if the port has active siblings
+	RTE_ETH_FOREACH_DEV_SIBLING(sibling_port_id, port->port_id) {
+		sibling_is_active |= !all_txrx_queue_stopped(sibling_port_id);
+	}
+
+	if (!sibling_is_active && info.device != NULL && (ret = rte_dev_remove(info.device)) < 0)
 		LOG(ERR, "rte_dev_remove: %s", rte_strerror(-ret));
 	if (port->pool != NULL) {
 		rte_mempool_free(port->pool);
