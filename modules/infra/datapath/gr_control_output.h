@@ -11,6 +11,15 @@
 #include <time.h>
 
 #define CONTROL_OUTPUT_UNKNOWN (uint8_t)0xff
+
+/**
+ * Callback definition when a packet is punted to the control plane.
+ * It is up to the function to free the received mbuf.
+ *
+ * @param struct rte_mbuf *
+ *   pointer to a mbuf, with the data offset set to the osi layer of
+ *   the node which punted the packet.
+ */
 typedef void (*control_output_cb_t)(struct rte_mbuf *);
 
 GR_MBUF_PRIV_DATA_TYPE(control_output_mbuf_data, {
