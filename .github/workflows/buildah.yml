@@ -17,7 +17,7 @@ jobs:
       IMAGE_NAME: grout
     steps:
     - name: Clone the repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     
     - name: Setup upterm session
       uses: lhotari/action-upterm@v1

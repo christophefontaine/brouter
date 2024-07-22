@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9:9.4
+FROM registry.access.redhat.com/fedora:latest
 
 RUN  dnf module list --disablerepo=* --enablerepo=codeready-builder-for-rhel-9-x86_64-rpms \
      && dnf install --disableplugin=subscription-manager -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm \
