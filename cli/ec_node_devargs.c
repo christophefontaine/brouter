@@ -36,6 +36,7 @@ static const char *const dpdk_vdevs[] = {
 	"net_tun",
 	"net_vhost",
 	"net_virtio_user",
+	"net_af_xdp,"
 };
 
 static int ec_node_devargs_complete(

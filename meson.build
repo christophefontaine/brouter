@@ -35,13 +35,14 @@ dpdk_dep = dependency(
     'c_std=c11',
     'default_library=static',
     'werror=false',
-    'enable_kmods=false',
+    'enable_kmods=true',
     'tests=false',
-    'enable_drivers=net/virtio,net/vhost,net/i40e,net/ice,*/iavf,net/ixgbe,net/null,net/tap,*/mlx5,bus/auxiliary',
+    'enable_drivers=net/virtio,net/vhost,net/i40e,net/ice,*/iavf,net/ixgbe,net/null,net/tap,*/mlx5,bus/auxiliary,net/igc,net/af_xdp',
     'enable_libs=graph,hash,fib,rib,pcapng,gso,vhost,cryptodev,dmadev,security',
-    'disable_apps=*',
     'enable_docs=false',
     'developer_mode=disabled',
+    'enable_iova_as_pa=true',
+    'platform=rpi5',
   ],
 )
 
