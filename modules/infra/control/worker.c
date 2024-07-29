@@ -127,6 +127,10 @@ int worker_ensure_default(int socket_id) {
 	unsigned main_lcore = rte_get_main_lcore();
 	struct worker *worker;
 
+#if RTE_MAX_NUMA_NODES == 1
+	socket_id = SOCKET_ID_ANY;
+#endif
+
 	STAILQ_FOREACH (worker, &workers, next) {
 		if (socket_id == SOCKET_ID_ANY)
 			return 0;

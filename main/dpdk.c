@@ -41,6 +41,7 @@ int dpdk_init(struct gr_args *args) {
 	arrpush(eal_args, main_lcore);
 	arrpush(eal_args, "-a");
 	arrpush(eal_args, "0000:00:00.0");
+	arrpush(eal_args, "--iova-mode=pa");
 
 	if (args->test_mode) {
 		arrpush(eal_args, "--no-shconf");

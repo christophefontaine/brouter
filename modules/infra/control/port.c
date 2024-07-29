@@ -94,6 +94,10 @@ static void port_queue_assign(struct iface_info_port *p) {
 	uint64_t rxq_ids = 0;
 	uint16_t txq = 0;
 
+#if RTE_MAX_NUMA_NODES == 1
+	socket_id = SOCKET_ID_ANY;
+#endif
+
 	STAILQ_FOREACH (worker, &workers, next) {
 		struct queue_map tx_qmap = {
 			.port_id = p->port_id,
