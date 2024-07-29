@@ -11,6 +11,8 @@
 #include <rte_ether.h>
 #include <rte_graph_worker.h>
 
+#include <stdlib.h>
+
 enum {
 	CONTROL_OUTPUT_ERROR,
 	EDGE_COUNT,

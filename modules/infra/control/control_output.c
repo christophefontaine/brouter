@@ -14,6 +14,7 @@
 
 #include <pthread.h>
 #include <stdatomic.h>
+#include <stdlib.h>
 
 extern struct rte_ring *control_output_ring;
 static struct event *control_output_evt;
